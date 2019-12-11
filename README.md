@@ -163,8 +163,7 @@ Object model
 
 ### Trello/Kanban
 
-[Link to your trello board](https://trello.com/b/PBqtkUFX/curasan) 
-or picture of your physical board
+https://trello.com/b/m0xBhHN9/exhibit-me
 
 ### Git
 
