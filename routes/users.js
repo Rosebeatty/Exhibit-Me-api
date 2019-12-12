@@ -61,22 +61,22 @@ var storage = multer.diskStorage({
             .catch((err) => res.status(400).json(err))
   })
 
-//   router.put('/update/:id', (req, res) => {
-//     const { id } = req.params;
+  router.put('/update/:id', (req, res) => {
+    const { id } = req.params;
 
-//     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
-//         res.status(400).json({ message: 'Specified id is not valid' });
-//         return;
-//       }
+    if(!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ message: 'Specified id is not valid' });
+        return;
+      }
 
-//       User.findByIdAndUpdate(id, req.body)
-//       .then(() => {
-//         res.json({ message: `Project with ${id} is updated successfully.` });
-//       })
-//       .catch(err => {
-//         res.json(err);
-//       })
-//   })
+      User.findByIdAndUpdate(id, req.body)
+      .then(() => {
+        res.json({ message: `Project with ${id} is updated successfully.` });
+      })
+      .catch(err => {
+        res.json(err);
+      })
+  })
 
 //   router.delete('/delete/:id', (req, res) => {
 //     const { id } = req.params;
