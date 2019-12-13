@@ -7,6 +7,8 @@ const userSchema = new Schema({
   password: String,
   space_name: String,
   theme: String,
+  objects: [ {type: Schema.Types.ObjectId, ref:'Model'} ],
+  comments: [{type: Schema.Types.ObjectId, ref:'Comment'}],
 }, {
   timestamps: {
     createdAt: 'created_at',

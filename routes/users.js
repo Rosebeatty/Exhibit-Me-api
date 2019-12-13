@@ -80,25 +80,25 @@ var storage = multer.diskStorage({
       })
   })
 
-//   router.delete('/delete/:id', (req, res) => {
-//     const { id } = req.params;
+  router.delete('/delete/:id', (req, res) => {
+    const { id } = req.params;
 
-//     if ( !mongoose.Types.ObjectId.isValid(id)) {
-//       res.status(400).json({ message: 'Specified id is not valid' });
-//       return;
-//     }
+    if ( !mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: 'Specified id is not valid' });
+      return;
+    }
 
-//     User.findByIdAndRemove(id)
-//     .then(() => {
-//       res
-//         .status(202)  //  Accepted
-//         .json({ message: `Project with ${id} was removed successfully.` });
-//     })
-//     .catch( err => {
-//       res.status(500).json(err);
-//     })
+    User.findByIdAndRemove(id)
+    .then(() => {
+      res
+        .status(202)  //  Accepted
+        .json({ message: `Project with ${id} was removed successfully.` });
+    })
+    .catch( err => {
+      res.status(500).json(err);
+    })
 
-//   })
+  })
 
 //   router.get('/search', (req, res) => {
 //       // User.find().populate('objects')
