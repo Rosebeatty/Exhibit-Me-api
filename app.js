@@ -20,10 +20,12 @@ mongoose
     keepAlive: true,
     useNewUrlParser: true,
     reconnectTries: Number.MAX_VALUE,
+    useFindAndModify: false
   })
   .then( () => console.log(`Connected to database`))
   .catch( (err) => console.error(err));
 
+ 
 
 // EXPRESS SERVER INSTANCE
 const app = express();
