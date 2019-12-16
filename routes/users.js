@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const router  = express.Router();
 const multer  = require('multer');
 const Model = require('../models/Model');
-const User = require('../models/user');
+const User = require('../models/User');
 
 
 var storage = multer.diskStorage({
