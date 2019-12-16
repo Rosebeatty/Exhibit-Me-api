@@ -53,7 +53,7 @@ app.use(                      //                                  ║   ⬆ 🍪
       mongooseConnection: mongoose.connection,//      session checks if `req.session.currentUser` exists
       ttl: 24 * 60 * 60, // 1 day                     and if it does it sets a cookie 🍪 on the headers
     }),                  //                           with the session id 
-    secret: process.env.SECRET_SESSION,
+    secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: 24 * 60 * 60 * 1000,},

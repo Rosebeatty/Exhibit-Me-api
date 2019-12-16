@@ -53,7 +53,7 @@ app.use(
       mongooseConnection: mongoose.connection,
       ttl: 24 * 60 * 60, // 1 day
     }),
-    secret: process.env.SECRET_SESSION,
+    secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
     cookie: {
