@@ -18,7 +18,7 @@ var storage = multer.diskStorage({
   
   var upload = multer({ storage: storage }).single('file')
   
-  router.post('/upload/:id', (req, res) => {
+  router.post('/upload/:id', (req, res, next) => {
   
 
   const { id } = req.params
@@ -51,7 +51,7 @@ var storage = multer.diskStorage({
 });
 
 
-router.delete('/deleteObject/:id', (req, res) => {
+router.delete('/deleteObject/:id', (req, res, next) => {
   const { id } = req.params;
 
   if ( !mongoose.Types.ObjectId.isValid(id)) {
@@ -75,7 +75,7 @@ router.delete('/deleteObject/:id', (req, res) => {
       })
   })
 
-  router.get('/filename', (req, res) => {
+  router.get('/filename', (req, res, next) => {
    
 
     Model.find()
@@ -98,7 +98,7 @@ router.delete('/deleteObject/:id', (req, res) => {
     })
   })
 
-  router.get('/:id', (req, res) => {
+  router.get('/:id', (req, res, next) => {
         const { id } = req.params
 
         if(!mongoose.Types.ObjectId.isValid(id)) {
@@ -113,7 +113,7 @@ router.delete('/deleteObject/:id', (req, res) => {
             .catch((err) => res.status(400).json(err))
   })
 
-  router.put('/update/:id', (req, res) => {
+  router.put('/update/:id', (req, res, next) => {
     const { id } = req.params;
     const { username, email, space_name, theme } = req.body
 
@@ -132,7 +132,7 @@ router.delete('/deleteObject/:id', (req, res) => {
       })
   })
 
-  router.delete('/delete/:id', (req, res) => {
+  router.delete('/delete/:id', (req, res, next) => {
     const { id } = req.params;
 
     if ( !mongoose.Types.ObjectId.isValid(id)) {

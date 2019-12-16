@@ -5,7 +5,7 @@ const User = require('../models/user');
 const Comment = require('../models/Comment');
 
 
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
    
 
      Comment.find()
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 })
 
 
-router.post('/create/:id', (req, res) => {
+router.post('/create/:id', (req, res, next) => {
     const { comment, userId } = req.body
 
     Comment.create({comment: comment, userId: userId})
@@ -36,7 +36,7 @@ router.post('/create/:id', (req, res) => {
   })
 
 
-router.patch('/update/:id', (req, res) => {
+router.patch('/update/:id', (req, res, next) => {
     const {id } = req.params;
     const { comment, userId } = req.body
 
@@ -54,7 +54,7 @@ router.patch('/update/:id', (req, res) => {
 
 
 
-router.delete('/delete/:id', (req, res) => {
+router.delete('/delete/:id', (req, res, next) => {
     const { id } = req.params;
 
     if ( !mongoose.Types.ObjectId.isValid(id)) {
