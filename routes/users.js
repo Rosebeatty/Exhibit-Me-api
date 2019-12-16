@@ -88,7 +88,7 @@ router.delete('/deleteObject/:id', (req, res, next) => {
 
 
 
-  router.get('/', (req, res) => {
+  router.get('/', (req, res, next) => {
     User.find().populate('objects', 'comments')
     .then(allTheUsers => {
       res.json(allTheUsers);
