@@ -2,9 +2,8 @@ const mongoose = require("mongoose");
 const Schema   = mongoose.Schema;
 
 const modelSchema = new Schema({
-  name: String,
   path: String,
-  originalName: String,
+  // originalName: String,
   user_id: [{type: Schema.Types.ObjectId, ref: 'User'}]
 
 }, {

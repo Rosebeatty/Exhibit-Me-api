@@ -5,17 +5,12 @@ const User = require('../models/User');
 const Comment = require('../models/Comment');
 
 
-router.get('/:userId/:commentId', (req, res) => {
-    const { commentId } = req.params
+router.get('/', (req, res) => {
+   
 
-    if(!mongoose.Types.ObjectId.isValid(id)) {
-        res.status(400).json({ message: 'Specified id is not valid' });
-        return;
-      }
-
-      Comment.findById(commentId)
+     Comment.find()
         .then((foundUser) => {
-            console.log(foundUser)
+            // console.log(foundUser)
           res.status(200).json(foundUser)
         })
         .catch((err) => res.status(400).json(err))
@@ -41,32 +36,47 @@ router.post('/create/:id', (req, res) => {
   })
 
 
-router.put('/update/:id', (req, res) => {
+router.patch('/update/:id', (req, res) => {
+    const {id } = req.params;
+    const { comment, userId } = req.body
+
 
     if ( !mongoose.Types.ObjectId.isValid(id)) {
         res.status(400).json({ message: 'Specified id is not valid' });
         return;
       }
+
+      Comment.findByIdAndUpdate(id, { comment, userId } )
+         .then( () => {
+             res.status(201).json({message: 'Comment updated'})
+         })
 })
 
-// router.delete('/delete/:id', (req, res) => {
-//     const { id } = req.params;
 
-//     if ( !mongoose.Types.ObjectId.isValid(id)) {
-//       res.status(400).json({ message: 'Specified id is not valid' });
-//       return;
-//     }
 
-//     User.findByIdAndRemove(id)
-//     .then(() => {
-//       res
-//         .status(202)  //  Accepted
-//         .json({ message: `Project with ${id} was removed successfully.` });
-//     })
-//     .catch( err => {
-//       res.status(500).json(err);
-//     })
-// })
+router.delete('/delete/:id', (req, res) => {
+    const { id } = req.params;
+
+    if ( !mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: 'Specified id is not valid' });
+      return;
+    }
+
+    Comment.findByIdAndRemove(id)
+        .then((deletedComment) => {
+            return deletedComment.user_id
+        })
+        .then((userId) => {
+            return User.findByIdAndUpdate(userId, { $pull : {comments: id}})
+        })
+        .then(() => {
+            res.status(201).json({message: "Comment deleted"})
+        })
+        .catch((err) => {
+            res.status(400).json(err)
+        })
+    })
+
 
 
 module.exports = router;

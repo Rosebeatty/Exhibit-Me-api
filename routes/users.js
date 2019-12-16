@@ -18,26 +18,78 @@ var storage = multer.diskStorage({
   
   var upload = multer({ storage: storage }).single('file')
   
-  router.post('/upload', (req, res) => {
+  router.post('/upload/:id', (req, res) => {
   
-    // const { file } = req.body;
-  console.log(req.body);
+
+  const { id } = req.params
   
     upload(req, res, (err)  =>{
-           if (err instanceof multer.MulterError) {
-               return res.status(500).json(err)
-           } else if (err) {
-               return res.status(500).json(err)
-           }
-      return res.status(200).send(req.file)
+      if (err){
+        console.log(JSON.stringify(err));
+        res.status(400).send('failed to save');
+      } else {
+        console.log('The filename is ' + res.req.file.filename);
+        
+        Model.create({path: res.req.file.filename, user_id: id})
+            .then( (newModel) => {
+                console.log(newModel);
+              
+                return User.findByIdAndUpdate(id, { $push: {objects: newModel._id} }, {new: true}).populate('models')   
+            })
+            .then((updatedUser) => {
+                res.status(201).json(updatedUser)
+                console.log(updatedUser)
+            })
+            .catch((err) => {
+                res.status(400).json(err)
+            })
+            // res.send(res.req.file.filename); 
+      }
+
+  })
   
-    })
-  
-  });
+});
+
+
+router.delete('/deleteObject/:id', (req, res) => {
+  const { id } = req.params;
+
+  if ( !mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+
+  Model.findByIdAndRemove(id)
+      .then((deletedModel) => {
+        console.log(deletedModel.user_id)
+          return deletedModel.user_id
+      })
+      .then((userId) => {
+          return User.findByIdAndUpdate(userId, { $pull : {objects: id}})
+      })
+      .then(() => {
+          res.status(201).json({message: "Object deleted"})
+      })
+      .catch((err) => {
+          res.status(400).json(err)
+      })
+  })
+
+  router.get('/filename', (req, res) => {
+   
+
+    Model.find()
+       .then((foundModel) => {
+           // console.log(foundUser)
+         res.status(200).json(foundModel)
+       })
+       .catch((err) => res.status(400).json(err))
+})
+
 
 
   router.get('/', (req, res) => {
-    User.find().populate('objects')
+    User.find().populate('objects', 'comments')
     .then(allTheUsers => {
       res.json(allTheUsers);
     })
