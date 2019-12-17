@@ -4,7 +4,7 @@ const router  = express.Router();
 const multer  = require('multer');
 const User = require('../models/User');
 const Model = require('../models/Model');
-const BackgroundImage = require('../models/BackgroundImage');
+const Background = require('../models/Background');
 
 
 var storage = multer.diskStorage({
@@ -62,13 +62,13 @@ router.post('/uploadBackground/:id', (req, res, next) => {
         console.log(JSON.stringify(err));
         res.status(400).send('failed to save');
       } else {
-        console.log('The filename is ' + res.req.file.name);
-        
-        BackgroundImage.create({path: res.req.file.name, user_id: id})
+        console.log('The filename is ' + res.req.file.filename);
+
+       Background.create({path: res.req.file.filename, user_id: id})
             .then( (newBkg) => {
                 console.log(newBkg);
               
-                return User.findByIdAndUpdate(id, { $push: {backgoundImage: newBkg._id} }, {new: true}).populate('backgroundImages')   
+                return User.findByIdAndUpdate(id, { $push: {backgrounds: newBkg._id} }, {new: true}).populate('backgrounds')   
             })
             .then((updatedUser) => {
                 res.status(201).json(updatedUser)
@@ -109,6 +109,30 @@ router.delete('/deleteObject/:id', (req, res, next) => {
       })
   })
 
+  router.delete('/deleteBackground/:id', (req, res, next) => {
+    const { id } = req.params;
+  
+    if ( !mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: 'Specified id is not valid' });
+      return;
+    }
+  
+    Background.findByIdAndRemove(id)
+        .then((deletedImage) => {
+          console.log(deletedImage.user_id)
+            return deletedImage.user_id
+        })
+        .then((userId) => {
+            return User.findByIdAndUpdate(userId, { $pull : {backgrounds: id}})
+        })
+        .then(() => {
+            res.status(201).json({message: "Background deleted"})
+        })
+        .catch((err) => {
+            res.status(400).json(err)
+        })
+    })
+
   router.get('/filename', (req, res, next) => {
    
 
@@ -119,6 +143,18 @@ router.delete('/deleteObject/:id', (req, res, next) => {
        })
        .catch((err) => res.status(400).json(err))
 })
+
+router.get('/getBackground', (req, res, next) => {
+   
+
+  Background.find()
+     .then((foundImage) => {
+         // console.log(foundUser)
+       res.status(200).json(foundImage)
+     })
+     .catch((err) => res.status(400).json(err))
+})
+
 
 
 

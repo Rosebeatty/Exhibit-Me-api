@@ -7,7 +7,7 @@ const userSchema = new Schema({
   password: String,
   space_name: String,
   theme: String,
-  backgroundImage: [{type: Schema.Types.ObjectId, ref:'BackgroundImage'}],
+  backgrounds: [{type: Schema.Types.ObjectId, ref:'Background'}],
   objects: [ {type: Schema.Types.ObjectId, ref:'Model'} ],
   comments: [{type: Schema.Types.ObjectId, ref:'Comment'}],
 }, {
