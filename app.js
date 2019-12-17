@@ -20,7 +20,7 @@ mongoose
     keepAlive: true,
     useNewUrlParser: true,
     reconnectTries: Number.MAX_VALUE,
-    useFindAndModify: false
+    useFindAndModify: false,
   })
   .then( () => console.log(`Connected to database`))
   .catch( (err) => console.error(err));

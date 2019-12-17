@@ -4,11 +4,12 @@ const router  = express.Router();
 const multer  = require('multer');
 const User = require('../models/User');
 const Model = require('../models/Model');
+const BackgroundImage = require('../models/BackgroundImage');
 
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-    cb(null, 'images')
+    cb(null, 'public/images')
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname )
@@ -35,6 +36,39 @@ var storage = multer.diskStorage({
                 console.log(newModel);
               
                 return User.findByIdAndUpdate(id, { $push: {objects: newModel._id} }, {new: true}).populate('models')   
+            })
+            .then((updatedUser) => {
+                res.status(201).json(updatedUser)
+                console.log(updatedUser)
+            })
+            .catch((err) => {
+                res.status(400).json(err)
+            })
+            // res.send(res.req.file.filename); 
+      }
+
+  })
+  
+});
+
+
+router.post('/uploadBackground/:id', (req, res, next) => {
+  
+
+  const { id } = req.params
+  
+    upload(req, res, (err)  =>{
+      if (err){
+        console.log(JSON.stringify(err));
+        res.status(400).send('failed to save');
+      } else {
+        console.log('The filename is ' + res.req.file.name);
+        
+        BackgroundImage.create({path: res.req.file.name, user_id: id})
+            .then( (newBkg) => {
+                console.log(newBkg);
+              
+                return User.findByIdAndUpdate(id, { $push: {backgoundImage: newBkg._id} }, {new: true}).populate('backgroundImages')   
             })
             .then((updatedUser) => {
                 res.status(201).json(updatedUser)
