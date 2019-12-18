@@ -135,7 +135,6 @@ router.delete('/deleteObject/:id', (req, res, next) => {
 
   router.get('/filename', (req, res, next) => {
    
-
     Model.find()
        .then((foundModel) => {
            // console.log(foundUser)
@@ -143,6 +142,23 @@ router.delete('/deleteObject/:id', (req, res, next) => {
        })
        .catch((err) => res.status(400).json(err))
 })
+
+router.get('/filename/:id', (req, res, next) => {
+  const { id } = req.params
+
+  if(!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ message: 'Specified id is not valid' });
+      return;
+    }
+
+  Model.findById(id)
+     .then((foundModel) => {
+         // console.log(foundUser)
+       res.status(200).json(foundModel)
+     })
+     .catch((err) => res.status(400).json(err))
+})
+
 
 router.get('/getBackground', (req, res, next) => {
    

@@ -16,6 +16,22 @@ router.get('/', (req, res, next) => {
         .catch((err) => res.status(400).json(err))
 })
 
+router.get('/:id', (req, res, next) => {
+    const { id } = req.params
+
+    if(!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({ message: 'Specified id is not valid' });
+        return;
+      }
+
+    User.findById(id)
+       .then((foundUser) => {
+           // console.log(foundUser)
+         res.status(200).json(foundUser)
+       })
+       .catch((err) => res.status(400).json(err))
+})
+
 
 router.post('/create/:id', (req, res, next) => {
     const { comment, userId } = req.body
