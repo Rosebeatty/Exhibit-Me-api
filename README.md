@@ -18,17 +18,17 @@ A social network created with React, A-Frame, MongoDB and NodeJs for artists and
 
 - **Logout:** As a user I can logout from the platform so no one else can use it
 
-- See my profile: As a user I can view my profile
+- **See my profile:** As a user I can view my profile
 
-- Edit profile: As a user I can edit my profile
+- **Edit profile:** As a user I can edit my profile
 
-- Add 3D object to my environment: As a user I can upload a 3D object (.glb format) to the virtual environment
+- **Add 3D object to my environment:** As a user I can upload a 3D object (.glb format) to the virtual environment
 
--  View other user profiles: As a user I can view the profiles of other users
+-  **View other user profiles:** As a user I can view the profiles of other users
 
-- Create/update/delete comments: As a user I can make/delete/update comments
+- **Create/update/delete comments:** As a user I can make/delete/update comments
 
-- Search users and themes: As a user I can use the search bar to search users and themes by hashtag
+- **Search users and themes:** As a user I can use the search bar to search users and themes by hashtag
 
   
 
@@ -57,10 +57,8 @@ A social network created with React, A-Frame, MongoDB and NodeJs for artists and
 | `/auth/signup`            | SignupPage           | anon only   | Signup form, link to login, navigate to homepage after signup |
 | `/auth/login`             | LoginPage            | anon only   | Login form, link to signup, navigate to homepage after login |
 | `/auth/logout`            | n/a                  | anon only   | Navigate to homepage after logout, expire session            |
-| `/profile`      | ProfilePage | user only   | Shows personal profile               |
-| `/profile/edit-profile` | ProfilePage | user only   | Edits profile                                     |
-| `/:user-id`   | UserPage | user only   | Gets specified user profile    |
-
+| `/profile`      | ProfilePage | user only   | Shows personal profile |
+| `/:user-id`   | UserPage | user only   | Gets specified user profile |
 
 
 ## Components
@@ -71,6 +69,12 @@ A social network created with React, A-Frame, MongoDB and NodeJs for artists and
 - ProfilePage
 - UserPage
 - Navbar
+- VRScene
+- UserVRScene
+- PostComment
+- UserComments
+- SearchBar
+- Comments
 
 
 
@@ -84,23 +88,6 @@ A social network created with React, A-Frame, MongoDB and NodeJs for artists and
   - auth.me()
   - auth.getUser() // synchronous
   
-  
-  
-  User Service
-  
-  - user.update(id)
-  - user.delete(id)
-  - user.get(id)
-  
-  
-  
-  3D Object Service
-  
-  - object.upload()
-  - object.delete(id)
-  - object.get(id)
-  
-  
 
 <br>
 
@@ -110,15 +97,24 @@ A social network created with React, A-Frame, MongoDB and NodeJs for artists and
 
 ## Models
 
-User model
+Users model
 
 ```javascript
 {
-  username: {type: String, required: true, unique: true},
-  email: {type: String, required: true, unique: true},
-  password: {type: String, required: true},
-  objects: [{type: Schema.Types.ObjectId,ref:'User'}]
-  comments: [{type: String}]
+ {
+  username: String,
+  email: String,
+  password: String,
+  space_name: String,
+  theme: String,
+  objects: [ {type: Schema.Types.ObjectId, ref:'Model'} ],
+  comments: [{type: Schema.Types.ObjectId, ref:'Comment'}],
+ }, {
+  timestamps: {
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+  } 
+ }
 }
 ```
 
@@ -127,10 +123,28 @@ User model
 Object model
 
 ```javascript
+{ 
  {
-   name: {type: String, required: true},
-   filepath: {type: String},
-   user-id: [{type: Schema.Types.ObjectId,ref:'Object'}]
+  path: String,
+  user_id: [{type: Schema.Types.ObjectId, ref: 'User'}]
+ }, {
+  timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
+ }
+}
+```
+
+
+
+Comment model
+
+```javascript
+ {
+  comment: String,
+  userId: [{type: Schema.Types.ObjectId, ref: 'User'}]
+
+}, {
+  timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
+   }
  }
 ```
 
@@ -146,15 +160,17 @@ Object model
 | POST        | `/auth/login`                 | {username, password}         | 200            | 401          | Checks if field is not empty (422), if user exists (404), and if password matches (404), then stores user in session |
 | POST        | `/auth/logout`                | (empty)                      | 204            | 400          | Logs the user out                                        |
 | GET         | `/users`             |                              |                | 400          | Gets all users                                 |
-| POST      | `/user/upload`  |                          |                |              | Uploads .glb file on server           |
-| DELETE   | `/user/delete/:objectId` | {objectId}              | 201            | 400          | Deletes user's object from environment |
-| GET      | `/search` |           | 200            | 400          | Gets users themes and names            |
-| GET    | `/user/:id` | {id}                         | 201            | 400          | Gets user info                  |
-| PUT       | `/user/update/:id`     | {id} |                | 400          | Updates user info                        |
-| DELETE   | `/user/delete/:id`      | {id}                         |                |              | Deletes user                         |
+| POST      | `/users/upload/:id`  |                          |                |         | Uploads .glb file on server and saves to profile           |
+| DELETE   | `/users/deleteObject/:id` | {id}              | 201            | 400          | Deletes user's object from environment |
+| GET    | `/users/:id` | {id}                         | 201            | 400          | Gets user info                  |
+| PUT       | `/users/update/:id`     | {id} |                | 400          | Updates user info                        |
+| DELETE   | `/users/delete/:id`      | {id}                         |                |              | Deletes user                        | | GET   | `/users/filename/`      | {id}                         |     |              | Gets filename of the last object saved in database  |
+| GET   | `/users/filename/:id`      | {id}                          | |              | Gets filename of object from user profile           |
+| POST        | `/comments` | {id}     | 200            | 404          | Find All Comments                  |
+| POST        | `/comments/:id` | {id}     | 200            | 404                   | Find All Comments Connected to User  |
 | POST        | `/comments/create/:id` | {id}     | 200            | 404          | Adds comment to specified user                  |
-| PUT         | `/comments/update/:id` | {id}                  | 201            | 400          | Edits specified comment                           |
-| DELETE      | `/comments/delete/:id` | {id}                         | 200            | 400          | Deletes specified comment                    |
+| PUT         | `/comments/update/:id` | {id}                  | 201            | 400          | Edits specified comment                    |
+| DELETE      | `/comments/delete/:id` | {id}                         | 200            | 400          | Deletes specified comment          |
 
 <br>
 
@@ -163,23 +179,17 @@ Object model
 
 ### Trello/Kanban
 
-https://trello.com/b/m0xBhHN9/exhibit-me
+[Link to my trello board](https://trello.com/b/m0xBhHN9/exhibit-me) 
+
 
 ### Git
 
-The url to your repository and to your deployed project
 
-[Client repository Link](https://github.com/screeeen/project-client)
+[Client repository Link](https://github.com/Rosebeatty/Exhibit-Me)
 
-[Server repository Link](https://github.com/screeeen/project-server)
+[Server repository Link](https://github.com/Rosebeatty/Exhibit-Me-api)
 
-[Deployed App Link](http://heroku.com)
-
-### Slides
-
-The url to your presentation slides
-
-[Slides Link](http://slides.com)
+[Deployed Exhibit Me App](http://exhibitme-herokuapp.com)
 
 
 
