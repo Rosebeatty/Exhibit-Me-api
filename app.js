@@ -32,7 +32,7 @@ mongoose
 const app = express();
 
 
-// app.use(compression());
+app.use(compression());
 
 
 // CORS MIDDLEWARE SETUP
