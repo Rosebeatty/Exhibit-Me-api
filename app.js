@@ -34,7 +34,7 @@ const app = express();
 
 
 app.use(compression());
-app.use(enforce.HTTPS());
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
 
 // CORS MIDDLEWARE SETUP
 app.use(
