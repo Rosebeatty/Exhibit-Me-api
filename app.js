@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const compression = require('compression');
+// const enforce = require('express-sslify');
 const MongoStore = require('connect-mongo')(session);
 const cors = require('cors');
 require('dotenv').config();
@@ -33,7 +34,7 @@ const app = express();
 
 
 app.use(compression());
-
+// app.use(enforce.HTTPS());
 
 // CORS MIDDLEWARE SETUP
 app.use(
@@ -43,7 +44,7 @@ app.use(
   }),
 );
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://exhibit-me.herokuapp.com');
+  // res.setHeader('Access-Control-Allow-Origin', 'https://exhibit-me.herokuapp.com');
   res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   res.setHeader('Access-Control-Allow-Credentials', true);

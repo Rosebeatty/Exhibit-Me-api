@@ -145,7 +145,6 @@ router.get("/filename/:id", (req, res, next) => {
 
   Model.findById(id)
     .then(foundModel => {
-      // console.log(foundUser)
       res.status(200).json(foundModel);
     })
     .catch(err => res.status(400).json(err));
@@ -155,7 +154,6 @@ router.get('/getBackground', (req, res, next) => {
 
   Background.find()
      .then((foundImage) => {
-         // console.log(foundUser)
        res.status(200).json(foundImage)
      })
      .catch((err) => res.status(400).json(err))

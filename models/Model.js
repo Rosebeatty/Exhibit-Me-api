@@ -3,7 +3,6 @@ const Schema   = mongoose.Schema;
 
 const modelSchema = new Schema({
   path: String,
-  // originalName: String,
   user_id: [{type: Schema.Types.ObjectId, ref: 'User'}]
 
 }, {
