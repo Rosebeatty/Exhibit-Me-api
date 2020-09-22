@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const compression = require('compression');
-// const enforce = require('express-sslify');
+const enforce = require('express-sslify');
 const MongoStore = require('connect-mongo')(session);
 const cors = require('cors');
 require('dotenv').config();
@@ -34,13 +34,13 @@ const app = express();
 
 
 app.use(compression());
-// app.use(enforce.HTTPS());
+app.use(enforce.HTTPS());
 
 // CORS MIDDLEWARE SETUP
 app.use(
   cors({
     credentials: true,
-    origin: [process.env.PUBLIC_DOMAIN, 'https://exhibit-me.herokuapp.com'],
+    origin: ['https://exhibit-me.herokuapp.com'],
   }),
 );
 app.use((req, res, next) => {
